@@ -3,6 +3,7 @@ import {
   AlertTriangle,
   ArrowDown,
   ArrowUp,
+  Calendar,
   MessageSquare,
   Paperclip,
   Trash2,
@@ -42,6 +43,18 @@ const priorityConfig: Record<Priority, PriorityProps> = {
   },
 }
 
+function isOverdue(dueDate?: string): boolean {
+  if (!dueDate) return false
+  const due = new Date(dueDate + 'T23:59:59')
+  return due < new Date()
+}
+
+function formatDate(dateStr: string): string {
+  if (!dateStr) return ''
+  const date = new Date(dateStr + 'T00:00:00')
+  return date.toLocaleDateString('pt-br', { day: '2-digit', month: 'short' })
+}
+
 export default function Card({
   id,
   title,
@@ -60,7 +73,7 @@ export default function Card({
   const Icon = config.icon
   console.log(config.color)
   return (
-    <div className="flex flex-col gap-2 group relative bg-[#161616] border border-[#222] rounded-xl p-3.5 hover:border-[#333] transition-all duration-150 hover:bg-hover select-none">
+    <div className="flex flex-col gap-2 group relative bg-[#161616] border border-[#222] rounded-xl px-6 py-3.5 hover:border-[#333] transition-all duration-150 hover:bg-hover select-none">
       <div
         className="absolute left-0 top-3 bottom-3 w-0.5 rounded-full"
         style={{ backgroundColor: config.color }}
@@ -108,7 +121,7 @@ export default function Card({
       <div className="flex items-center justify-between">
         {/* assignner */}
         <div
-          className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-semibold text-white shrink-0"
+          className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-semibold text-foreground shrink-0"
           style={{ backgroundColor: assigneeColor }}
           title={assignee}
         >
@@ -116,6 +129,16 @@ export default function Card({
         </div>
 
         <div className="flex gap-3">
+          {/* dueDate  */}
+          {dueDate && (
+            <span
+              className={`flex items-center gap-1 text-[10px] ${isOverdue(dueDate) ? 'text-[#ff3b30]' : 'text-[#555]'}`}
+            >
+              <Calendar size={10} />
+              {formatDate(dueDate)}
+            </span>
+          )}
+
           {/* Comments */}
           {comments > 0 && (
             <span className="flex items-center gap-1 text-[10px] text-[#555]">

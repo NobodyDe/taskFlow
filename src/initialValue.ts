@@ -53,7 +53,7 @@ export const initialCards: Record<string, CardProps> = {
     tags: ['ui', 'auth'],
     assignee: 'LM',
     assigneeColor: '#32d74b',
-    dueDate: '2026-04-22',
+    dueDate: '2026-05-22',
     columnId: 'todo',
     createdAt: '2026-04-13',
     attachments: 5,
