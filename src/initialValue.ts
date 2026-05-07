@@ -1,4 +1,5 @@
 import type { CardProps } from './types/CardProps'
+import type { initialColumnProps } from './types/initialColumnProps'
 
 export const initialCards: Record<string, CardProps> = {
   c1: {
@@ -203,3 +204,38 @@ export const initialCards: Record<string, CardProps> = {
     comments: 20,
   },
 }
+
+export const initialColumn: initialColumnProps[] = [
+  {
+    id: 'backlog',
+    title: 'Backlog',
+    color: '#555555',
+    cardIds: ['c1', 'c2', 'c3'],
+  },
+  {
+    id: 'todo',
+    title: 'To Do',
+    color: '#0a84ff',
+    cardIds: ['c4', 'c5', 'c6'],
+    wipLimit: 5,
+  },
+  {
+    id: 'in-progress',
+    title: 'In Progress',
+    color: '#ff9500',
+    cardIds: ['c7', 'c8', 'c9'],
+    wipLimit: 3,
+  },
+  {
+    id: 'review',
+    title: 'Review',
+    color: '#bf5af2',
+    cardIds: ['c10', 'c11'],
+  },
+  {
+    id: 'done',
+    title: 'Done',
+    color: '#32d74b',
+    cardIds: ['c12', 'c13', 'c14'],
+  },
+]
