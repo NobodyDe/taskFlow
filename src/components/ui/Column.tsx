@@ -1,11 +1,16 @@
-import { Form, MoreHorizontal, Pen, Plus, Trash2, X } from 'lucide-react'
+import { MoreHorizontal, Pen, Plus, Trash2, X } from 'lucide-react'
 import Card from './Card'
-import { initialCards, initialColumn } from '../../initialValue'
+
 import { useState } from 'react'
 import { useBoardStore } from '../../stores/useBoardStore'
+import { typograph } from './typograph'
+import CreateCardModal from './CreateCardModal'
 
 interface CreateColumnModalProps {
   onClose: () => void
+  columnId?: string
+  initialTitle?: string
+  initialColor?: string
 }
 
 const colors: string[] = [
@@ -17,30 +22,39 @@ const colors: string[] = [
   '#ffd60a',
   '#5e5ce6',
   '#ff6961',
+  '#555555',
 ]
 
 // modal create Column
 
-function CreateColumnModal({ onClose }: CreateColumnModalProps) {
-  const [selectedColor, setSelectedColor] = useState(colors[0])
+function CreateColumnModal({
+  onClose,
+  initialTitle,
+  initialColor,
+  columnId,
+}: CreateColumnModalProps) {
+  const [columnName, setColumName] = useState(initialTitle ?? '')
+  const [selectedColor, setSelectedColor] = useState(initialColor ?? colors[0])
   const addColum = useBoardStore((state) => state.addColumn)
+  const updateColumn = useBoardStore((state) => state.updateColumn)
   function createColumn(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault()
 
-    const { title } = Object.fromEntries(new FormData(e.currentTarget))
+    if (!columnName.trim()) return
 
-    if (!title) return
+    if (columnId) {
+      updateColumn(columnId, { title: columnName.trim(), color: selectedColor })
+    } else {
+      addColum({
+        id: crypto.randomUUID(),
+        title: columnName,
+        color: selectedColor,
+        cardIds: [],
+      })
+    }
 
-    addColum({
-      id: crypto.randomUUID(),
-      title: String(title),
-      color: selectedColor,
-      cardIds: [],
-    })
     onClose()
   }
-
-  // console.log(selectedColor)
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
@@ -60,6 +74,8 @@ function CreateColumnModal({ onClose }: CreateColumnModalProps) {
           <input
             type="text"
             name="title"
+            value={columnName}
+            onChange={(e) => setColumName(e.target.value)}
             placeholder="Ex: Em Teste..."
             className="w-full bg-[#161616] border border-[#282828] rounded-lg px-3 py-2.5 text-white text-sm placeholder-[#3a3a3a] focus:outline-none focus:border-[#444] transition-colors"
             autoFocus
@@ -75,7 +91,7 @@ function CreateColumnModal({ onClose }: CreateColumnModalProps) {
                 name="color"
                 onClick={() => setSelectedColor(cor)}
                 className={`rounded-full p-3 transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${
-                  selectedColor === cor ? 'outline outline-2 outline-offset-2' : ''
+                  selectedColor === cor ? 'outline-2 outline-offset-2' : ''
                 }`}
                 style={{
                   backgroundColor: cor,
@@ -104,8 +120,55 @@ function CreateColumnModal({ onClose }: CreateColumnModalProps) {
   )
 }
 
-function ColumnHeader({ title, color, cardIds }) {
+function DeleteModal({ onClose, columnId }) {
+  const deleteColumnStore = useBoardStore((state) => state.deleteColumn)
+  function deleteColumn(e: React.SubmitEvent<HTMLFormElement>) {
+    e.preventDefault()
+
+    if (!columnId) return
+
+    deleteColumnStore(columnId)
+
+    onClose()
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
+      <form
+        onSubmit={deleteColumn}
+        className="relative w-80 bg-[#111] border border-[#222] rounded-2xl shadow-2xl p-6 flex flex-col gap-1"
+      >
+        <h1 className={typograph({})}>Tem certeza que deseja remover essa coluna?</h1>
+
+        <span className={typograph({ size: 'xs', color: 'detail' })}>
+          Todos os cards que contem nela serão apagados
+        </span>
+        <div className="flex gap-2 mt-4">
+          <button
+            onClick={onClose}
+            type="button"
+            className="cursor-pointer flex-1 px-4 py-2 rounded-lg text-sm text-[#666] hover:text-white hover:bg-[#1e1e1e] transition-colors"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            className="flex-1 flex gap-2 justify-center px-4 py-2 rounded-lg bg-[#ff3b30] text-foregroud text-sm font-semibold hover:bg-[#53130f] transition-colors items-center cursor-pointer"
+          >
+            <Trash2 size={13} />
+            Remover
+          </button>
+        </div>
+      </form>
+    </div>
+  )
+}
+
+function ColumnHeader({ id, title, color, cardIds }) {
   const [isEdit, setEditOpen] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isDeleteModal, setIsDeleteModal] = useState(false)
   return (
     <div className="flex items-center justify-between mb-3 px-1">
       <div className="flex items-center gap-2.5">
@@ -124,46 +187,69 @@ function ColumnHeader({ title, color, cardIds }) {
       </div>
       {/* column button */}
 
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-1 relative">
         <button className="p-1.5 rounded-lg text-[#555] hover:text-white hover:bg-border transition-colors cursor-pointer">
           <Plus size={14} />
         </button>
         <button
           onClick={() => setEditOpen((prev) => !prev)}
-          className="relative p-1.5 rounded-lg text-[#555] hover:text-white hover:bg-border transition-colors cursor-pointer"
+          className="p-1.5 rounded-lg text-[#555] hover:text-white hover:bg-border transition-colors cursor-pointer"
         >
           <MoreHorizontal size={14} />
-          {/* editOpen */}
-          {isEdit && (
-            <>
-              <div className="fixed inset-0 z-10" />
-              <div className="flex flex-col absolute right-0 top-8 z-20 w-44 bg-hover border border-[#282828] rounded-xl shadow-2xl overflow-hidden items-center">
-                <button className="flex items-center gap-2 w-full px-3 py-2.5 text-sm text-[#ff3b30] hover:bg-[#222] transition-colors">
-                  <Trash2 size={13} />
-                  Excluir coluna
-                </button>
-                <button className="flex items-center gap-2 w-full px-3 py-2.5 text-sm text-[#444] hover:bg-[#222] hover:text-[#888] transition-colors">
-                  <Pen size={13} />
-                  Renomear coluna
-                </button>
-              </div>
-            </>
-          )}
         </button>
+        {/* editOpen */}
+        {isEdit && (
+          <>
+            <div onClick={() => setEditOpen(false)} className="fixed inset-0 z-10" />
+            <div className="flex flex-col absolute right-0 top-8 z-20 w-44 bg-hover border border-[#282828] rounded-xl shadow-2xl overflow-hidden items-center">
+              <button
+                onClick={() => {
+                  setIsDeleteModal(true)
+                  setEditOpen(false)
+                }}
+                className="flex items-center gap-2 w-full px-3 py-2.5 text-sm text-[#ff3b30] hover:bg-[#222] transition-colors"
+              >
+                <Trash2 size={13} />
+                Excluir coluna
+              </button>
+              <button
+                onClick={() => {
+                  setIsModalOpen(true)
+                  setEditOpen(false)
+                }}
+                className="flex items-center gap-2 w-full px-3 py-2.5 text-sm text-[#444] hover:bg-[#222] hover:text-[#888] transition-colors"
+              >
+                <Pen size={13} />
+                Editar coluna
+              </button>
+            </div>
+          </>
+        )}
       </div>
+      {isModalOpen && (
+        <CreateColumnModal
+          columnId={id}
+          initialTitle={title}
+          initialColor={color}
+          onClose={() => setIsModalOpen(false)}
+        />
+      )}
+      {isDeleteModal && <DeleteModal columnId={id} onClose={() => setIsDeleteModal(false)} />}
     </div>
   )
 }
 
 export default function Column() {
-  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
+  const [cardModalColumnId, setCardModalColumnId] = useState<string | null>(null)
   const columns = useBoardStore((state) => state.columns)
+  const cards = useBoardStore((state) => state.cards)
   return (
     <div className="flex gap-6">
       {columns.map(({ id, title, color, cardIds }) => (
         <div key={id} className="flex flex-col shrink-0 w-72">
           {/* column header */}
-          <ColumnHeader title={title} color={color} cardIds={cardIds} />
+          <ColumnHeader id={id} title={title} color={color} cardIds={cardIds} />
 
           {/* linha */}
           <div
@@ -173,11 +259,15 @@ export default function Column() {
           {/* card */}
           <div className="flex flex-col gap-3">
             {cardIds.map((id) => {
-              const card = initialCards[id]
+              const card = cards[id]
+              if (!card) return null
               return <Card key={id} {...card} />
             })}
             {/* add card button */}
-            <button className="flex items-center gap-2 px-3 py-2 rounded-lg text-[#444] hover:text-[#888] hover:bg-[#151515] transition-colors text-xs font-medium cursor-pointer">
+            <button
+              onClick={() => setCardModalColumnId(id)}
+              className="flex items-center gap-2 px-3 py-2 rounded-lg text-[#444] hover:text-[#888] hover:bg-[#151515] transition-colors text-xs font-medium cursor-pointer"
+            >
               <Plus size={12} />
               Adicionar card
             </button>
@@ -194,6 +284,9 @@ export default function Column() {
         </button>
       </div>
       {isModalOpen && <CreateColumnModal onClose={() => setIsModalOpen(false)} />}
+      {cardModalColumnId && (
+        <CreateCardModal columnId={cardModalColumnId} onClose={() => setCardModalColumnId(null)} />
+      )}
     </div>
   )
 }
