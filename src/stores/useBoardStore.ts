@@ -13,6 +13,7 @@ interface BoardState {
   createCard: (data: CardProps) => void
   deleteCard: (id: string) => void
   setSelectedCardId: (id: string | null) => void
+  updateCard: (id: string, data: Partial<CardProps>) => void
 }
 
 export const useBoardStore = create<BoardState>((set) => ({
@@ -44,4 +45,14 @@ export const useBoardStore = create<BoardState>((set) => ({
       }
     }),
   setSelectedCardId: (id) => set({ selectedCardId: id }),
+  updateCard: (id, data) =>
+    set((state) => ({
+      cards: {
+        ...state.cards,
+        [id]: {
+          ...state.cards[id],
+          ...data,
+        },
+      },
+    })),
 }))
