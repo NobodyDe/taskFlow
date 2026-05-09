@@ -14,7 +14,7 @@ import { typograph } from './typograph'
 import { useState } from 'react'
 import { useBoardStore } from '../../stores/useBoardStore'
 
-const priorityConfig: Record<Priority, PriorityProps> = {
+export const priorityConfig: Record<Priority, PriorityProps> = {
   critical: {
     label: 'Crítico',
     color: '#ff3b30',
@@ -61,7 +61,10 @@ function DeleteCardModal({ onClose, id }) {
   const deleteCard = useBoardStore((state) => state.deleteCard)
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
+      <div
+        onClick={onClose}
+        className="absolute inset-0 bg-black/80 backdrop-blur-sm cursor-pointer"
+      />
       <form className="relative w-80 bg-[#111] border border-[#222] rounded-2xl shadow-2xl p-6 flex flex-col gap-1">
         <h1 className={typograph({})}>Tem certeza que deseja remover esse card?</h1>
 
@@ -107,8 +110,15 @@ export default function Card({
   const config = priorityConfig[priority]
   const Icon = config.icon
   const [openDeleteModal, setOpenDeleteModal] = useState<string | null>(null)
+  const setSeledtedCardId = useBoardStore((state) => state.setSelectedCardId)
   return (
-    <div className="flex flex-col gap-2 group relative bg-[#161616] border border-[#222] rounded-xl px-6 py-3.5 hover:border-[#333] transition-all duration-150 hover:bg-hover select-none">
+    <div
+      onClick={(e) => {
+        e.stopPropagation()
+        setSeledtedCardId(id)
+      }}
+      className="flex flex-col gap-2 group relative bg-[#161616] border border-[#222] rounded-xl px-6 py-3.5 hover:border-[#333] transition-all duration-150 hover:bg-hover select-none"
+    >
       <div
         className="absolute left-0 top-3 bottom-3 w-0.5 rounded-full"
         style={{ backgroundColor: config.color }}
@@ -127,7 +137,10 @@ export default function Card({
           {config.label}
         </span>
         <button
-          onClick={() => setOpenDeleteModal(id)}
+          onClick={(e) => {
+            e.stopPropagation()
+            setOpenDeleteModal(id)
+          }}
           className="opacity-0 group-hover:opacity-100 text-[#444] hover:text-[#ff3b30] transition-all p-0.5 rounded cursor-pointer"
         >
           <Trash2 size={14} />

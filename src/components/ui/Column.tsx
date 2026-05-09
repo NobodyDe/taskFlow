@@ -5,6 +5,7 @@ import { useState } from 'react'
 import { useBoardStore } from '../../stores/useBoardStore'
 import { typograph } from './typograph'
 import CreateCardModal from './CreateCardModal'
+import CardModal from './CardModal'
 
 interface CreateColumnModalProps {
   onClose: () => void
@@ -246,6 +247,7 @@ export default function Column() {
   const cards = useBoardStore((state) => state.cards)
   return (
     <div className="flex gap-6">
+      <CardModal />
       {columns.map(({ id, title, color, cardIds }) => (
         <div key={id} className="flex flex-col shrink-0 w-72">
           {/* column header */}
