@@ -20,7 +20,7 @@ export const useBoardStore = create<BoardState>((set) => ({
   columns: initialColumn,
   cards: initialCards,
   selectedCardId: null,
-  addColumn: (column) => set((state) => ({ columns: [...state.columns, column] })),
+  addColumn: (data) => set((state) => ({ columns: [...state.columns, data] })),
   updateColumn: (id, data) =>
     set((state) => ({
       columns: state.columns.map((col) => (col.id === id ? { ...col, ...data } : col)),

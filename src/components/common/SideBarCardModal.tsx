@@ -1,7 +1,6 @@
 import { Check, Clock, Flag, Trash2 } from 'lucide-react'
 import { teamMembers } from '../ui/Header'
 import { useBoardStore } from '../../stores/useBoardStore'
-import { priorityConfig } from '../ui/Card'
 import type { Priority } from '../../types/priority'
 
 const priorityOptions: { value: Priority; label: string; color: string }[] = [
@@ -15,8 +14,10 @@ export default function SidebarCardModal() {
   const card = useBoardStore((s) => (s.selectedCardId ? s.cards[s.selectedCardId] : null))
   const columns = useBoardStore((s) => s.columns)
 
+  if (!card) return null
+
   return (
-    <div className="w-80 border-l border-[#1a1a1a] bg-[#0a0a0a] flex-shrink-0 overflow-y-auto p-6">
+    <div className="w-80 border-l border-hover bg-[#0a0a0a] shrink-0 overflow-y-auto p-6">
       <div className="space-y-6">
         {/* Status */}
         <div>
@@ -29,14 +30,14 @@ export default function SidebarCardModal() {
                 key={col.id}
                 className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm transition-colors"
                 style={{
-                  backgroundColor: card.columnId === col.id ? `${col.color}15` : 'transparent',
-                  border: `1px solid ${card.columnId === col.id ? `${col.color}40` : '#1a1a1a'}`,
-                  color: card.columnId === col.id ? col.color : '#888',
+                  backgroundColor: card?.columnId === col.id ? `${col.color}15` : 'transparent',
+                  border: `1px solid ${card?.columnId === col.id ? `${col.color}40` : '#1a1a1a'}`,
+                  color: card?.columnId === col.id ? col.color : '#888',
                 }}
               >
                 <span className="w-2 h-2 rounded-full" style={{ backgroundColor: col.color }} />
                 {col.title}
-                {card.columnId === col.id && <Check size={14} className="ml-auto" />}
+                {card?.columnId === col.id && <Check size={14} className="ml-auto" />}
               </button>
             ))}
           </div>
@@ -53,9 +54,9 @@ export default function SidebarCardModal() {
                 key={opt.value}
                 className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm transition-colors"
                 style={{
-                  backgroundColor: card.priority === opt.value ? `${opt.color}15` : 'transparent',
-                  border: `1px solid ${card.priority === opt.value ? `${opt.color}40` : '#1a1a1a'}`,
-                  color: card.priority === opt.value ? opt.color : '#888',
+                  backgroundColor: card?.priority === opt.value ? `${opt.color}15` : 'transparent',
+                  border: `1px solid ${card?.priority === opt.value ? `${opt.color}40` : '#1a1a1a'}`,
+                  color: card?.priority === opt.value ? opt.color : '#888',
                 }}
               >
                 <Flag size={14} />
@@ -105,7 +106,7 @@ export default function SidebarCardModal() {
           <input
             type="date"
             value={card.dueDate || ''}
-            className="w-full bg-[#111] border border-[#1e1e1e] rounded-lg px-3 py-2.5 text-white text-sm focus:outline-none focus:border-[#333] transition-colors [color-scheme:dark]"
+            className="w-full bg-[#111] border border-border rounded-lg px-3 py-2.5 text-white text-sm focus:outline-none focus:border-[#333] transition-colors [color-scheme:dark]"
           />
           {card.dueDate && new Date(card.dueDate) < new Date() && (
             <p className="mt-2 text-xs text-[#ff3b30] flex items-center gap-1">

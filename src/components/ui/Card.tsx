@@ -13,6 +13,7 @@ import type { CardProps } from '../../types/CardProps'
 import { typograph } from './typograph'
 import { useState } from 'react'
 import { useBoardStore } from '../../stores/useBoardStore'
+import DeleteConfirmModal from '../modal/DeleteConfirmModal'
 
 export const priorityConfig: Record<Priority, PriorityProps> = {
   critical: {
@@ -57,42 +58,6 @@ function formatDate(dateStr: string): string {
   return date.toLocaleDateString('pt-br', { day: '2-digit', month: 'short' })
 }
 
-function DeleteCardModal({ onClose, id }) {
-  const deleteCard = useBoardStore((state) => state.deleteCard)
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div
-        onClick={onClose}
-        className="absolute inset-0 bg-black/80 backdrop-blur-sm cursor-pointer"
-      />
-      <form className="relative w-80 bg-[#111] border border-[#222] rounded-2xl shadow-2xl p-6 flex flex-col gap-1">
-        <h1 className={typograph({})}>Tem certeza que deseja remover esse card?</h1>
-
-        <span className={typograph({ size: 'xs', color: 'detail' })}>
-          Todos as informações serão apagadas
-        </span>
-        <div className="flex gap-2 mt-4">
-          <button
-            type="button"
-            onClick={onClose}
-            className="cursor-pointer flex-1 px-4 py-2 rounded-lg text-sm text-[#666] hover:text-white hover:bg-[#1e1e1e] transition-colors"
-          >
-            Cancelar
-          </button>
-          <button
-            type="submit"
-            onClick={() => deleteCard(id)}
-            className="flex-1 flex gap-2 justify-center px-4 py-2 rounded-lg bg-[#ff3b30] text-foregroud text-sm font-semibold hover:bg-[#53130f] transition-colors items-center cursor-pointer"
-          >
-            <Trash2 size={13} />
-            Remover
-          </button>
-        </div>
-      </form>
-    </div>
-  )
-}
-
 export default function Card({
   id,
   title,
@@ -109,13 +74,17 @@ export default function Card({
 }: CardProps) {
   const config = priorityConfig[priority]
   const Icon = config.icon
-  const [openDeleteModal, setOpenDeleteModal] = useState<string | null>(null)
-  const setSeledtedCardId = useBoardStore((state) => state.setSelectedCardId)
+  const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false)
+  const { setSelectedCardId, deleteCard } = useBoardStore()
+
+  function action(action) {
+    console.log(action)
+  }
+
   return (
     <div
-      onClick={(e) => {
-        e.stopPropagation()
-        setSeledtedCardId(id)
+      onClick={() => {
+        setSelectedCardId(id)
       }}
       className="flex flex-col gap-2 group relative bg-[#161616] border border-[#222] rounded-xl px-6 py-3.5 hover:border-[#333] transition-all duration-150 hover:bg-hover select-none"
     >
@@ -139,14 +108,22 @@ export default function Card({
         <button
           onClick={(e) => {
             e.stopPropagation()
-            setOpenDeleteModal(id)
+            setOpenDeleteModal(true)
+            action('deleteCard')
           }}
           className="opacity-0 group-hover:opacity-100 text-[#444] hover:text-[#ff3b30] transition-all p-0.5 rounded cursor-pointer"
         >
           <Trash2 size={14} />
         </button>
       </div>
-      {openDeleteModal && <DeleteCardModal id={id} onClose={() => setOpenDeleteModal(null)} />}
+      {openDeleteModal && (
+        <DeleteConfirmModal
+          onConfirm={() => deleteCard(id)}
+          onClose={() => setOpenDeleteModal(false)}
+          title="Tem certeza que deseja remover esse card"
+          description="Todas as informações serão apagadas"
+        />
+      )}
 
       {/* title */}
       <h3 className={typograph({ size: 'detail' })}>{title}</h3>

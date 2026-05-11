@@ -78,7 +78,7 @@ export default function CheckListModal() {
         <input
           type="text"
           placeholder="Adicionar item..."
-          className="flex-1 bg-[#111] border border-[#1e1e1e] rounded-lg px-3 py-2 text-white text-sm placeholder-[#444] focus:outline-none focus:border-[#333] transition-colors"
+          className="flex-1 bg-[#111] border border-border rounded-lg px-3 py-2 text-white text-sm placeholder-[#444] focus:outline-none focus:border-[#333] transition-colors"
         />
         <button className="px-4 py-2 rounded-lg bg-hover border border-[#282828] text-white hover:bg-[#222] transition-colors">
           <Plus size={14} />
