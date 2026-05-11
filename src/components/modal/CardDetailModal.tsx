@@ -12,7 +12,7 @@ type EditableField = 'title' | 'description'
 
 type DraftState = Pick<CardProps, EditableField>
 
-export default function CardModal() {
+export default function CardDetailModal() {
   const card = useBoardStore((s) => (s.selectedCardId ? s.cards[s.selectedCardId] : null))
   const setSelectedCardId = useBoardStore((s) => s.setSelectedCardId)
   const updateCard = useBoardStore((s) => s.updateCard)
@@ -23,14 +23,6 @@ export default function CardModal() {
     title: '',
     description: '',
   })
-
-  // useEffect(() => {
-  //   if (!card) return
-  //   setDraftDescription(card.description ?? '')
-  //   setIsEditingDescription(false)
-  //   setDraftTitle(card.title ?? '')
-  //   setIsEditingTitle(false)
-  // }, [card?.id, card?.description])
 
   if (!card) return null
 

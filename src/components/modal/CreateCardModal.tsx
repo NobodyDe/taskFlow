@@ -2,7 +2,7 @@ import { Calendar, Flag, Plus, Tag, User, X } from 'lucide-react'
 import type { Priority } from '../../types/priority'
 import { useBoardStore } from '../../stores/useBoardStore'
 import { useRef, useState } from 'react'
-import { teamMembers } from './Header'
+import { teamMembers } from '../ui/Header'
 import type { CardProps } from '../../types/CardProps'
 
 const priorityOptions: { value: Priority; label: string; color: string }[] = [
@@ -62,8 +62,6 @@ export default function CreateCardModal({ columnId, onClose }) {
       attachments: 0,
       comments: 0,
     }
-
-    console.log(newCard)
 
     createCard(newCard)
     onClose()

@@ -30,8 +30,6 @@ export function Sidebar() {
   const [projectsOpen, setProjectsOpen] = useState(true)
   const isSidebarCollapsed = useSidebarStore((state) => state.sidebarOpen)
 
-  console.log(isSidebarCollapsed)
-
   return (
     <aside
       className={`flex flex-col bg-secondary min-h-screen border-r border-border transition-all duration-300 ${isSidebarCollapsed ? 'w-16' : 'w-64'}`}

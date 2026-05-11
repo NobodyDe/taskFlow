@@ -59,9 +59,9 @@ export default function AttachmentsModal() {
           return (
             <div
               key={att.id}
-              className="flex items-center gap-3 p-3 rounded-lg bg-[#111] border border-[#1a1a1a] hover:border-[#282828] transition-colors group"
+              className="flex items-center gap-3 p-3 rounded-lg bg-[#111] border border-hover hover:border-[#282828] transition-colors group"
             >
-              <div className="w-10 h-10 rounded-lg bg-[#1a1a1a] flex items-center justify-center flex-shrink-0">
+              <div className="w-10 h-10 rounded-lg bg-hover flex items-center justify-center shrink-0">
                 <Icon size={16} className="text-[#888]" />
               </div>
               <div className="flex-1 min-w-0">
@@ -70,7 +70,7 @@ export default function AttachmentsModal() {
                   {att.size && `${att.size} • `}Adicionado por {att.uploadedBy} em {att.uploadedAt}
                 </p>
               </div>
-              <button className="opacity-0 group-hover:opacity-100 p-2 rounded-lg text-[#888] hover:text-white hover:bg-[#1a1a1a] transition-all">
+              <button className="opacity-0 group-hover:opacity-100 p-2 rounded-lg text-[#888] hover:text-white hover:bg-hover transition-all">
                 <Download size={14} />
               </button>
             </div>
