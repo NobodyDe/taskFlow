@@ -2,11 +2,11 @@ import { ActivityIcon, Edit3, MessageSquare, MoreVertical, X } from 'lucide-reac
 import { useState } from 'react'
 import { useBoardStore } from '../../stores/useBoardStore'
 import type { CardProps } from '../../types/CardProps'
-import Activity from '../common/Activity'
-import AttachmentsModal from '../common/AttachmentsModal'
-import CheckListModal from '../common/ChecklistModal'
-import Comments from '../common/Comments'
-import SidebarCardModal from '../common/SideBarCardModal'
+import Activity from '../ui/Activity'
+import AttachmentsModal from '../ui/AttachmentsModal'
+import CheckListModal from '../ui/CheckListModal'
+import Comments from '../ui/Comments'
+import SidebarCardModal from '../ui/SideBarCardModal'
 
 type EditableField = 'title' | 'description'
 

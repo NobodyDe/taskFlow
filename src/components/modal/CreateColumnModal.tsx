@@ -1,6 +1,5 @@
 import { X } from 'lucide-react'
 import { useState } from 'react'
-import { useBoardStore } from '../../stores/useBoardStore'
 
 const colors: string[] = [
   '#0a84ff',
@@ -16,7 +15,6 @@ const colors: string[] = [
 
 interface CreateColumnModalProps {
   onClose: () => void
-  columnId?: string
   initialTitle?: string
   initialColor?: string
   onConfirm?: (_data: { id?: string; title: string; color: string }) => void
@@ -26,7 +24,6 @@ export function CreateColumnModal({
   onClose,
   initialTitle,
   initialColor,
-  columnId,
   onConfirm,
 }: CreateColumnModalProps) {
   const [columnName, setColumName] = useState(initialTitle ?? '')
@@ -40,6 +37,7 @@ export function CreateColumnModal({
       title: columnName.trim(),
       color: selectedColor,
     }
+
     onConfirm(data)
     onClose()
   }
