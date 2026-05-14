@@ -12,13 +12,11 @@ const priorityOptions: { value: Priority; label: string; color: string }[] = [
   { value: 'critical', label: 'Crítico', color: '#ff3b30' },
 ]
 
-export default function CreateCardModal({ columnId, onClose }) {
+export default function CreateCardModal({ columnId, onClose, onConfirm, columns }) {
   const [selectedColumn, setSelectedColumn] = useState<string>(columnId)
   const [priority, setPriority] = useState<string>('low')
   const [tags, setTags] = useState<string[]>([])
   const tagInputRef = useRef<HTMLInputElement>(null)
-  const columns = useBoardStore((state) => state.columns)
-  const createCard = useBoardStore((state) => state.createCard)
 
   function addTags() {
     const input = tagInputRef.current
@@ -63,7 +61,9 @@ export default function CreateCardModal({ columnId, onClose }) {
       comments: 0,
     }
 
-    createCard(newCard)
+    console.log(newCard)
+
+    onConfirm(newCard)
     onClose()
   }
 

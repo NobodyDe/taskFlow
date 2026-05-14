@@ -11,49 +11,12 @@ import { CreateColumnModal } from '../modal/CreateColumnModal'
 
 // modal create Column
 
-type ColumnFormData = {
-  id?: string
-  title: string
-  color: string
-}
-
-type ColumnAction =
-  | {
-      type: 'createColumn'
-      payload: ColumnFormData
-    }
-  | {
-      type: 'updateColumn'
-      payload: {
-        id: string
-        data: ColumnFormData
-      }
-    }
-  | {
-      type: 'deleteColumn'
-      payload: {
-        id: string
-      }
-    }
-
 function ColumnHeader({ id, title, color, cardIds }) {
   const [isEdit, setEditOpen] = useState(false)
   const [columnModal, setColumnModal] = useState(null)
   const [isDeleteModal, setIsDeleteModal] = useState(false)
 
-  const { deleteColumn, updateColumn } = useBoardStore()
-
-  function handleColumnAction(action: ColumnAction) {
-    switch (action.type) {
-      case 'updateColumn':
-        updateColumn(id, action.payload.data)
-        break
-
-      case 'deleteColumn':
-        deleteColumn(action.payload.id)
-        break
-    }
-  }
+  const dispatch = useBoardStore((s) => s.dispatch)
 
   return (
     <div className="flex items-center justify-between mb-3 px-1">
@@ -114,18 +77,35 @@ function ColumnHeader({ id, title, color, cardIds }) {
       </div>
       {columnModal && (
         <CreateColumnModal
-          columnId={id}
           initialTitle={title}
           initialColor={color}
           onClose={() => setColumnModal(false)}
-          onConfirm={(data) => handleColumnAction({ type: 'createColumn', payload: { id, data } })}
+          onConfirm={(data) =>
+            dispatch({
+              type: 'column/update',
+              payload: {
+                columnId: id,
+                data: {
+                  title: data.title,
+                  color: data.color,
+                },
+              },
+            })
+          }
         />
       )}
       {isDeleteModal && (
         <DeleteConfirmModal
           columnId={id}
           onClose={() => setIsDeleteModal(false)}
-          onConfirm={() => handleColumnAction({ type: 'deleteColumn', payload: { id } })}
+          onConfirm={() =>
+            dispatch({
+              type: 'column/delete',
+              payload: {
+                columnId: id,
+              },
+            })
+          }
           title="Tem certeza que deseja remover esta coluna?"
           description="todos os cards dela serão apagados"
         />
@@ -137,18 +117,7 @@ function ColumnHeader({ id, title, color, cardIds }) {
 export default function Column() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
   const [cardModalColumnId, setCardModalColumnId] = useState<string | null>(null)
-  // const columns = useBoardStore((state) => state.columns)
-  // const cards = useBoardStore((state) => state.cards)
-  const { cards, columns, addColumn } = useBoardStore()
-
-  function handleColumnCreate(payload: ColumnFormData) {
-    addColumn({
-      id: crypto.randomUUID(),
-      title: payload.title,
-      color: payload.color,
-      cardIds: [],
-    })
-  }
+  const { cards, columns, dispatch } = useBoardStore()
 
   return (
     <div className="flex gap-6">
@@ -165,10 +134,10 @@ export default function Column() {
           />
           {/* card */}
           <div className="flex flex-col gap-3">
-            {cardIds.map((id) => {
-              const card = cards[id]
+            {cardIds.map((cardId) => {
+              const card = cards[cardId]
               if (!card) return null
-              return <Card key={id} {...card} />
+              return <Card key={cardId} {...card} />
             })}
             {/* add card button */}
             <button
@@ -193,11 +162,36 @@ export default function Column() {
       {isModalOpen && (
         <CreateColumnModal
           onClose={() => setIsModalOpen(false)}
-          onConfirm={(data) => handleColumnCreate(data)}
+          onConfirm={(data) =>
+            dispatch({
+              type: 'column/create',
+              payload: {
+                column: {
+                  id: crypto.randomUUID(),
+                  title: data.title,
+                  color: data.color,
+                  cardIds: [],
+                },
+              },
+            })
+          }
         />
       )}
       {cardModalColumnId && (
-        <CreateCardModal columnId={cardModalColumnId} onClose={() => setCardModalColumnId(null)} />
+        <CreateCardModal
+          columnId={cardModalColumnId}
+          columns={columns}
+          onClose={() => setCardModalColumnId(null)}
+          onConfirm={(data) =>
+            dispatch({
+              type: 'card/create',
+              payload: {
+                columnId: cardModalColumnId,
+                data: data,
+              },
+            })
+          }
+        />
       )}
     </div>
   )

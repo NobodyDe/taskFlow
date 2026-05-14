@@ -1,5 +1,5 @@
 import { Check, Clock, Flag, Trash2 } from 'lucide-react'
-import { teamMembers } from '../ui/Header'
+import { teamMembers } from './Header'
 import { useBoardStore } from '../../stores/useBoardStore'
 import type { Priority } from '../../types/priority'
 

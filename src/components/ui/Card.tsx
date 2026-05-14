@@ -75,11 +75,7 @@ export default function Card({
   const config = priorityConfig[priority]
   const Icon = config.icon
   const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false)
-  const { setSelectedCardId, deleteCard } = useBoardStore()
-
-  function action(action) {
-    console.log(action)
-  }
+  const { setSelectedCardId, dispatch } = useBoardStore()
 
   return (
     <div
@@ -109,7 +105,6 @@ export default function Card({
           onClick={(e) => {
             e.stopPropagation()
             setOpenDeleteModal(true)
-            action('deleteCard')
           }}
           className="opacity-0 group-hover:opacity-100 text-[#444] hover:text-[#ff3b30] transition-all p-0.5 rounded cursor-pointer"
         >
@@ -118,7 +113,14 @@ export default function Card({
       </div>
       {openDeleteModal && (
         <DeleteConfirmModal
-          onConfirm={() => deleteCard(id)}
+          onConfirm={() =>
+            dispatch({
+              type: 'card/delete',
+              payload: {
+                id: id,
+              },
+            })
+          }
           onClose={() => setOpenDeleteModal(false)}
           title="Tem certeza que deseja remover esse card"
           description="Todas as informações serão apagadas"
