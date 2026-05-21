@@ -100,19 +100,6 @@ export const useBoardStore = create<BoardState>((set) => ({
       }
     }),
 
-  // addColumn: (data) => set((state) => ({ columns: [...state.columns, data] })),
-  // updateColumn: (id, data) =>
-  //   set((state) => ({
-  //     columns: state.columns.map((col) => (col.id === id ? { ...col, ...data } : col)),
-  //   })),
-  // deleteColumn: (id) => set((state) => ({ columns: state.columns.filter((col) => col.id !== id) })),
-  // createCard: (data) =>
-  //   set((state) => ({
-  //     cards: { ...state.cards, [data.id]: data },
-  //     columns: state.columns.map((col) =>
-  //       col.id === data.columnId ? { ...col, cardIds: [...col.cardIds, data.id] } : col
-  //     ),
-  //   })),
   deleteCard: (id) =>
     set((state) => {
       const { [id]: _, ...remainingCards } = state.cards

@@ -12,6 +12,7 @@
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.2.4",
+    "@tanstack/react-query-devtools": "^5.100.11",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "@vitejs/plugin-react": "^6.0.1",
@@ -29,6 +30,8 @@
     "vite": "^8.0.10"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.100.11",
+    "axios": "^1.16.1",
     "lucide": "^1.14.0",
     "lucide-react": "^1.14.0",
     "react": "^19.0.0",
