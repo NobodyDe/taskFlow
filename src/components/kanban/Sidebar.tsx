@@ -12,6 +12,8 @@ import {
 import { typograph } from '../ui/typograph'
 import { useState } from 'react'
 import { useSidebarStore } from '../../stores/useSidebarStore'
+import UserAvatar from './UserAvatar'
+import { useProjects } from '../../hooks/queries/useProjects'
 
 const navItems = [
   { icon: LayoutGrid, label: 'Board', active: true },
@@ -20,15 +22,18 @@ const navItems = [
   { icon: Settings, label: 'Settings', active: false },
 ]
 
-const projects = [
-  { id: 'p1', name: 'Dashboard v2.0', color: '#0a84ff', active: true },
-  { id: 'p2', name: 'Mobile App', color: '#bf5af2', active: false },
-  { id: 'p3', name: 'API Redesign', color: '#ff9500', active: false },
-]
+// const projects = [
+//   { id: 'p1', name: 'Dashboard v2.0', color: '#0a84ff', active: true },
+//   { id: 'p2', name: 'Mobile App', color: '#bf5af2', active: false },
+//   { id: 'p3', name: 'API Redesign', color: '#ff9500', active: false },
+// ]
 
 export function Sidebar() {
   const [projectsOpen, setProjectsOpen] = useState(true)
   const isSidebarCollapsed = useSidebarStore((state) => state.sidebarOpen)
+  const { data: projects, isLoading } = useProjects()
+
+  console.log(projects)
 
   return (
     <aside
@@ -76,22 +81,22 @@ export function Sidebar() {
           </button>
           {projectsOpen && (
             <div className="flex flex-col gap-1">
-              {projects.map((project) => (
+              {projects?.map((project) => (
                 <button
                   key={project.id}
                   className={`flex items-center gap-2.5 px-2 py-2 rounded-lg transition-colors ${project.active ? 'bg-hover text-foreground' : 'text-[#666] hover:text-[#aaa] hover:bg-[#151515]'}`}
                 >
                   <span
                     className={`w-2 h-2 rounded-full shrink-0`}
-                    style={{ backgroundColor: project.color }}
+                    style={{ backgroundColor: project.color_hex }}
                   ></span>
                   <span className={typograph({ size: 'detail' })}>{project.name}</span>
-                  {project.active && (
+                  {/* {project.active && (
                     <span
                       className="ml-auto w-1.5 h-1.5 rounded-full"
                       style={{ backgroundColor: project.color }}
                     />
-                  )}
+                  )} */}
                 </button>
               ))}
               <button className="flex items-center gap-2.5 px-2 py-2 rounded-lg text-[#555] hover:text-[#888] transition-colors cursor-pointer">
@@ -116,22 +121,7 @@ export function Sidebar() {
         )}
 
         {/* user */}
-        <div className="flex items-center gap-3 px-3 py-4 border-t border-border">
-          <div className="w-8 h-8 rounded-full bg-[#0a84ff] flex items-center justify-center shrink-0">
-            <span className="text-white text-xs font-semibold">HS</span>
-          </div>
-          {!isSidebarCollapsed && (
-            <>
-              <div>
-                <p className={typograph({ size: 'detail' })}>Henrique Santos</p>
-                <p className={typograph({ size: 'xs', color: 'detail' })}>Developer</p>
-              </div>
-              <button className="text-[#444] hover:text-[#888] transition-colors ml-auto cursor-pointer">
-                <LogOut size={14} />
-              </button>
-            </>
-          )}
-        </div>
+        <UserAvatar isCollapsed={isSidebarCollapsed} />
       </div>
     </aside>
   )
