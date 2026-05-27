@@ -1,15 +1,15 @@
 import { useMutation } from '@tanstack/react-query'
-import { authService } from '../../api/services/authService'
+import { AuthService } from '../../api/services/authService'
 
 export function useCheckEmail() {
   return useMutation({
-    mutationFn: (email: string) => authService.checkEmail(email),
+    mutationFn: (email: string) => AuthService.checkEmail(email),
   })
 }
 
-export function useLogin() {
-  return useMutation({
-    mutationFn: ({ email, password }: { email: string; password: string }) =>
-      authService.auth(email, password),
-  })
-}
+// export function useLogin() {
+//   return useMutation({
+//     mutationFn: ({ email, password }: { email: string; password: string }) =>
+//       authService.auth(email, password),
+//   })
+// }
