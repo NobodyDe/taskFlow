@@ -1,7 +1,8 @@
+import { authApi } from '../authAPi'
 import api from '../axios'
 
 interface CheckEmailResponse {
-  exists: boolean
+  userEmailExist: boolean
 }
 
 interface AuthResponse {
@@ -18,7 +19,7 @@ interface AuthResponse {
 //     return data
 //   },
 //   refreshToken: async (): Promise<AuthResponse> => {
-//     const { data } = await api.post<AuthResponse>('auth/refresh')
+//     const { data } = await api.post<AuthResponse>('/auth/refresh')
 //     return data
 //   },
 //   logout: async (): Promise<void> => {
@@ -30,6 +31,16 @@ export class AuthService {
   static async checkEmail(email: string): Promise<CheckEmailResponse> {
     const { data } = await api.post<CheckEmailResponse>('/auth/check-email', { email })
 
+    return data
+  }
+
+  static async auth(email: string, password: string): Promise<AuthResponse> {
+    const { data } = await authApi.post<AuthResponse>('/auth/login', { email, password })
+    return data
+  }
+  static async refreshToken(): Promise<AuthResponse> {
+    const { data } = await authApi.post<AuthResponse>('/auth/refresh')
+    console.log(data)
     return data
   }
 }

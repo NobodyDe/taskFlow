@@ -7,9 +7,9 @@ export function useCheckEmail() {
   })
 }
 
-// export function useLogin() {
-//   return useMutation({
-//     mutationFn: ({ email, password }: { email: string; password: string }) =>
-//       authService.auth(email, password),
-//   })
-// }
+export function useLogin() {
+  return useMutation({
+    mutationFn: ({ email, password }: { email: string; password: string }) =>
+      AuthService.auth(email, password),
+  })
+}
