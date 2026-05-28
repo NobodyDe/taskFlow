@@ -4,7 +4,7 @@ import { useAuthStore } from '../stores/useAuthStore'
 const api = axios.create({
   baseURL: 'http://localhost:3000',
   headers: { Accept: 'application/json' },
-  withCredentials: true,
+  withCredentials: false,
 })
 
 api.interceptors.request.use(
@@ -37,21 +37,21 @@ api.interceptors.response.use(
       return Promise.reject(error)
     }
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true
-      try {
-        const { data } = await api.post('/auth/refresh')
+    // if (error.response?.status === 401 && !originalRequest._retry) {
+    //   originalRequest._retry = true
+    //   try {
+    //     const { data } = await api.post('/auth/refresh')
 
-        useAuthStore.getState().setAccessToken(data.access_token)
+    //     useAuthStore.getState().setAccessToken(data.access_token)
 
-        originalRequest.headers.Authorization = `Bearer ${data.access_token}`
-        return api(originalRequest)
-      } catch (refreshError) {
-        useAuthStore.getState().logout()
-        window.location.href = '/Login'
-        return Promise.reject(refreshError)
-      }
-    }
+    //     originalRequest.headers.Authorization = `Bearer ${data.access_token}`
+    //     return api(originalRequest)
+    //   } catch (refreshError) {
+    //     useAuthStore.getState().logout()
+    //     window.location.href = '/Login'
+    //     return Promise.reject(refreshError)
+    //   }
+    // }
 
     return Promise.reject(error)
   }

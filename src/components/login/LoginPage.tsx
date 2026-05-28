@@ -4,7 +4,7 @@ import { Edit2 } from 'lucide-react'
 import ButtonContinue from '../common/ButtonContinue'
 import PasswordInput from '../common/PasswordInput'
 import InputElement from '../common/InputElement'
-import { useCheckEmail } from '../../hooks/mutation/useAuthMutation'
+import { useCheckEmail, useLogin } from '../../hooks/mutation/useAuthMutation'
 import { useAuthStore } from '../../stores/useAuthStore'
 import { useNavigate } from 'react-router'
 import RegisterPage from './RegisterPage'
@@ -28,7 +28,7 @@ function PasswordPage({ email, onBack }: PasswordStepProps) {
   const [error, setError] = useState('')
   const { mutate: login, isPending } = useLogin()
   const { setAccessToken } = useAuthStore()
-  const navigate = useNavigate() // do react-router
+  const navigate = useNavigate()
 
   function handleLogin(e: React.SubmitEvent) {
     e.preventDefault()
@@ -98,7 +98,9 @@ function EmailPage({ email, onEmailChange, onEmailConfirmed, setStep }: EmailSte
     }
 
     checkEmail(email, {
-      onSuccess: (data) => onEmailConfirmed(data.exists),
+      onSuccess: (data) => {
+        onEmailConfirmed(data.userEmailExist)
+      },
       onError: (err) => setError(`Erro no servidor: ${err.message}`),
     })
   }
