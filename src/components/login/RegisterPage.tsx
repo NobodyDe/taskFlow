@@ -6,6 +6,8 @@ import { useState } from 'react'
 import { zodResolver } from '@hookForm/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
+import { useCreateAccount } from '../../hooks/mutation/useAuthMutation'
+import { useNavigate } from 'react-router'
 
 const avatarColors = [
   { id: 'orange', value: '#FF6B1A' },
@@ -30,19 +32,21 @@ const accountSchema = z
       .string()
       .min(3, 'Deve ter mais que 3 caracteres')
       .regex(/^\D+$/, 'Não pode conter números'),
-    color_hex: z.enum(['#FF6B1A', '#4F8EF7', '#9B5DE5', '#00C896', '#F7C948', '#E05C7A']),
     email: z.email().min(3, 'O email é obrigatório'),
     password: z.string().min(8),
     confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: 'As sennhas precisam ser iguais',
+    path: ['confirmPassword'],
   })
 
 type AccountSchemeProps = z.infer<typeof accountSchema>
 
 export default function RegisterPage({ setStep }) {
   const [selectedColor, setSelectedColor] = useState('#FF6B1A')
+  const { mutate: createAccount } = useCreateAccount()
+  const navigate = useNavigate()
   const {
     register,
     handleSubmit,
@@ -52,11 +56,28 @@ export default function RegisterPage({ setStep }) {
   })
 
   function handleCreateAccont(data: AccountSchemeProps) {
-    console.log(data)
+    const payload = {
+      first_name: data.first_name,
+      last_name: data.last_name,
+      initials: `${data.first_name.charAt(0)}${data.last_name.charAt(0)}`,
+      position: data.position,
+      color_hex: selectedColor,
+      email: data.email,
+      password: data.password,
+    }
+    createAccount(payload, {
+      onSuccess: (data) => {
+        console.log('Conta criada:', data)
+        navigate('/', { replace: true })
+      },
+      onError: (error) => {
+        console.log(error)
+      },
+    })
   }
 
   return (
-    <form onSubmit={handleSubmit(handleCreateAccont)}>
+    <form onSubmit={handleSubmit(handleCreateAccont, (errors) => console.log(errors))}>
       <h2 className="text-white text-[22px] font-normal mb-6">Crie sua conta</h2>
 
       <div className="space-y-4 mb-6">
