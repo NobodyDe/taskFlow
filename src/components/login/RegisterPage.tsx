@@ -3,6 +3,9 @@ import ButtonContinue from '../common/ButtonContinue'
 import InputElement from '../common/InputElement'
 import PasswordInput from '../common/PasswordInput'
 import { useState } from 'react'
+import { zodResolver } from '@hookForm/resolvers/zod'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
 
 const avatarColors = [
   { id: 'orange', value: '#FF6B1A' },
@@ -13,38 +16,89 @@ const avatarColors = [
   { id: 'pink', value: '#E05C7A' },
 ]
 
+const accountSchema = z
+  .object({
+    first_name: z
+      .string()
+      .min(3, 'Deve ter mais que 3 caracteres')
+      .regex(/^\D+$/, 'Não pode conter números'),
+    last_name: z
+      .string()
+      .min(3, 'Deve ter mais que 3 caracteres')
+      .regex(/^\D+$/, 'Não pode conter números'),
+    position: z
+      .string()
+      .min(3, 'Deve ter mais que 3 caracteres')
+      .regex(/^\D+$/, 'Não pode conter números'),
+    color_hex: z.enum(['#FF6B1A', '#4F8EF7', '#9B5DE5', '#00C896', '#F7C948', '#E05C7A']),
+    email: z.email().min(3, 'O email é obrigatório'),
+    password: z.string().min(8),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: 'As sennhas precisam ser iguais',
+  })
+
+type AccountSchemeProps = z.infer<typeof accountSchema>
+
 export default function RegisterPage({ setStep }) {
   const [selectedColor, setSelectedColor] = useState('#FF6B1A')
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<AccountSchemeProps>({
+    resolver: zodResolver(accountSchema),
+  })
+
+  function handleCreateAccont(data: AccountSchemeProps) {
+    console.log(data)
+  }
+
   return (
-    <div>
+    <form onSubmit={handleSubmit(handleCreateAccont)}>
       <h2 className="text-white text-[22px] font-normal mb-6">Crie sua conta</h2>
 
       <div className="space-y-4 mb-6">
         {/* First name & Last name */}
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <InputElement type={'text'} placeholder={'Primeiro nome'} />
-            {/* {errors.firstName && (
-                    <p className="text-[#E05C7A] text-xs mt-1.5">{errors.firstName}</p>
-                  )} */}
+            <InputElement
+              type="text"
+              placeholder="Primeiro nome"
+              {...register('first_name', { required: 'O primeiro nome é obrigatório' })}
+              error={errors.first_name?.message}
+            />
           </div>
           <div>
-            <InputElement type={'text'} placeholder={'Segundo nome'} />
-            {/* {errors.lastName && (
-                    <p className="text-[#E05C7A] text-xs mt-1.5">{errors.lastName}</p>
-                  )} */}
+            <InputElement
+              type="text"
+              placeholder="Ultimo nome"
+              {...register('last_name', { required: 'O ultimo nome é obrigatório' })}
+              error={errors.last_name?.message}
+            />
           </div>
         </div>
 
         {/* Email */}
         <div>
-          <InputElement type={'email'} placeholder={'name@company.com'} />
+          <InputElement
+            type="email"
+            placeholder="name@company.com"
+            {...register('email', { required: 'O email é obrigatório' })}
+            error={errors.email?.message}
+          />
           {/* {errors.email && <p className="text-[#E05C7A] text-xs mt-1.5">{errors.email}</p>} */}
         </div>
 
         {/* Position */}
         <div>
-          <InputElement type={'text'} placeholder={'e.g. Frontend Developer'} />
+          <InputElement
+            type="text"
+            placeholder="e.g. Frontend Developer"
+            {...register('position', { required: 'A posição é obrigatória' })}
+            error={errors.position?.message}
+          />
         </div>
 
         {/* Avatar color */}
@@ -79,20 +133,23 @@ export default function RegisterPage({ setStep }) {
         {/* Password & Confirm password */}
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <PasswordInput />
-            {/* {errors.password && (
-                    <p className="text-[#E05C7A] text-xs mt-1.5">{errors.password}</p>
-                  )} */}
+            <PasswordInput
+              autoComplete="new-password"
+              {...register('password', { required: 'A Senha é obrigatoria' })}
+              error={errors.password?.message}
+            />
           </div>
           <div>
-            <PasswordInput />
-            {/* {errors.confirmPassword && (
-                    <p className="text-[#E05C7A] text-xs mt-1.5">{errors.confirmPassword}</p>
-                  )} */}
+            <PasswordInput
+              placeholder="Confirme a senha"
+              autoComplete="confirm-password"
+              {...register('confirmPassword', { required: 'Confirma a senha é obrigatorio' })}
+              error={errors.confirmPassword?.message}
+            />
           </div>
         </div>
 
-        <ButtonContinue placeholder={'Criar conta'} />
+        <ButtonContinue type="submit" placeholder={'Criar conta'} />
       </div>
 
       {/* Bottom link */}
@@ -102,6 +159,6 @@ export default function RegisterPage({ setStep }) {
           Faça login
         </button>
       </p>
-    </div>
+    </form>
   )
 }

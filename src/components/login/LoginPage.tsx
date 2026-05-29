@@ -63,7 +63,7 @@ function PasswordPage({ email, onBack }: PasswordStepProps) {
 
       <div className="space-y-4 mb-2">
         <PasswordInput
-          onChange={(e) => {
+          onValueChange={(e) => {
             setPassword(e)
             setError('')
           }}
@@ -114,15 +114,15 @@ function EmailPage({ email, onEmailChange, onEmailConfirmed, setStep }: EmailSte
           type={'email'}
           placeholder={'name@company.com'}
           value={email}
-          onChange={(e: string) => {
-            onEmailChange(e)
+          onChange={(e) => {
+            onEmailChange(e.target.value)
             setError('')
           }}
         />
       </div>
       {error && <p className="text-[#ff4343] text-xs pb-2">{error}</p>}
       <div className="space-y-4 mb-6">
-        <ButtonContinue type={'submit'} onClick={handleSubmit} placeholder={'Continue'} />
+        <ButtonContinue type={'submit'} placeholder={'Continue'} />
       </div>
 
       {/* Divider */}
