@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query'
-import { AuthService } from '../../api/services/authService'
+import { AuthService, type CreateAccountPayload } from '../../api/services/authService'
 
 export function useCheckEmail() {
   return useMutation({
@@ -11,5 +11,10 @@ export function useLogin() {
   return useMutation({
     mutationFn: ({ email, password }: { email: string; password: string }) =>
       AuthService.auth(email, password),
+  })
+}
+export function useCreateAccount() {
+  return useMutation({
+    mutationFn: (payload: CreateAccountPayload) => AuthService.createAccount(payload),
   })
 }
