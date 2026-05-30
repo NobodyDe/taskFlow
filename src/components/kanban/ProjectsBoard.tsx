@@ -15,6 +15,7 @@ import type { Project } from '../../types/Project'
 import { useState } from 'react'
 import { teamMembers } from '../ui/Header'
 import { useProjects } from '../../hooks/queries/useProjects'
+import { useUser } from '../../hooks/queries/useUser'
 
 const mockMembers = ['LM', 'CT']
 
@@ -265,6 +266,7 @@ function ProjectCard({ project }: projectsCardProps) {
 
 export default function ProjectsBoard() {
   const { data: projects, isLoading } = useProjects()
+  const { data: user } = useUser()
 
   return (
     <section className="bg-background flex-1 flex flex-col h-screen overflow-hidden">
@@ -272,13 +274,12 @@ export default function ProjectsBoard() {
       <header className="flex-shrink-0 px-8 pt-8 pb-6 border-b border-[#1a1a1a]">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-white text-2xl font-semibold tracking-tight mb-1">Projetos</h1>
-            <p className="text-[#666] text-sm">Projetos</p>
+            <h1 className="text-white text-2xl font-semibold tracking-tight mb-1">{`Olá ${user.first_name}`}</h1>
+            <p className="text-[#666] text-sm">No que vamos trabalhar hoje?</p>
           </div>
 
           <button className="flex items-center gap-2 px-4 py-2.5 bg-white hover:bg-[#e8e8e8] rounded-lg text-black text-sm font-semibold transition-colors">
-            <Plus size={16} />
-            Novo Projeto
+            <Plus size={16} />+ Projeto
           </button>
         </div>
 
