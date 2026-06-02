@@ -1,12 +1,10 @@
 import { LogOut } from 'lucide-react'
 import { typograph } from '../ui/typograph'
-import { useUser } from '../../hooks/queries/useUser'
-import AvatarSkeleton from '../skeleton/AvatarSkeleton'
+
+import { useAuthStore } from '../../stores/useAuthStore'
 
 export default function UserAvatar({ isCollapsed }) {
-  const { data: user, isLoading } = useUser()
-
-  if (isLoading) return <AvatarSkeleton isCollapsed />
+  const { user } = useAuthStore()
 
   return (
     <div className="flex items-center gap-3 px-3 py-4 border-t border-border">

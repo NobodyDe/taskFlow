@@ -20,14 +20,12 @@ interface EmailStepProps {
 
 interface PasswordStepProps {
   email: string
-  onBack: () => void // voltar para o step de email
 }
 
-function PasswordPage({ email, onBack }: PasswordStepProps) {
+function PasswordPage({ email }: PasswordStepProps) {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const { mutate: login, isPending } = useLogin()
-  const { setAccessToken } = useAuthStore()
   const navigate = useNavigate()
 
   function handleLogin(e: React.SubmitEvent) {
@@ -40,7 +38,6 @@ function PasswordPage({ email, onBack }: PasswordStepProps) {
       { email, password },
       {
         onSuccess: (data) => {
-          setAccessToken(data.access_token)
           navigate('/')
         },
         onError: () => {
