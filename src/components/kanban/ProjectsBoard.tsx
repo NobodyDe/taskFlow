@@ -16,6 +16,8 @@ import { useState } from 'react'
 import { teamMembers } from '../ui/Header'
 import { useProjects } from '../../hooks/queries/useProjects'
 import { useAuthStore } from '../../stores/useAuthStore'
+import { useUpdateProject } from '../../hooks/mutation/useProjectMutation'
+import { useBoardStore } from '../../stores/useBoardStore'
 
 const mockMembers = ['LM', 'CT']
 
@@ -67,6 +69,8 @@ function ProjectCard({ project }: projectsCardProps) {
   const [isMenuOpen, setMenuOpen] = useState(false)
   const [nameInput, setNameInput] = useState(project.name)
   const [descriptionInput, setDescriptionInput] = useState(project.description)
+  const updateProject = useUpdateProject()
+  const { setSelectedProject } = useBoardStore()
 
   function handleCancel() {
     setNameInput(project.name)
@@ -74,7 +78,8 @@ function ProjectCard({ project }: projectsCardProps) {
     setIsEditing(false)
   }
 
-  function handleSubmit() {
+  function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
+    e.preventDefault()
     const cleanedName = nameInput.trim()
     const cleanedDescription = descriptionInput.trim()
 
@@ -88,15 +93,18 @@ function ProjectCard({ project }: projectsCardProps) {
       return
     }
 
-    const payload = {
-      id: project.id,
-      name: cleanedName,
-      description: cleanedDescription,
-    }
+    updateProject.mutate(
+      { projectId: project.id, name: cleanedName, description: cleanedDescription },
+      {
+        onSuccess: () => setIsEditing(false),
+        onError: (error) => alert(` ${error}erro ao atualizar projeto`),
+      }
+    )
   }
 
   return (
     <div
+      onClick={() => setSelectedProject(project.id)}
       key={project.id}
       className="group bg-[#0d0d0d] border border-[#1a1a1a] hover:border-[#282828] rounded-xl transition-all"
     >
@@ -316,7 +324,7 @@ export default function ProjectsBoard() {
 
         <div className="grid grid-cols-1 gap-3 max-w-4xl">
           {projects?.map((project) => (
-            <ProjectCard project={project} />
+            <ProjectCard key={project.id} project={project} />
           ))}
         </div>
       </div>
