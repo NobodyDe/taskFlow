@@ -47,6 +47,8 @@ interface BoardState {
   columns: initialColumnProps[]
   cards: Record<string, CardProps>
   selectedCardId: string | null
+  selectedProject: string | null
+  setSelectedProject: (id: string) => void
   dispatch: (action: BoardAction) => void
 
   deleteCard: (id: string) => void
@@ -58,6 +60,12 @@ export const useBoardStore = create<BoardState>((set) => ({
   columns: initialColumn,
   cards: initialCards,
   selectedCardId: null,
+  selectedProject: null,
+
+  setSelectedProject: (id) =>
+    set({
+      selectedProject: id,
+    }),
 
   dispatch: (action: BoardAction) =>
     set((state) => {
