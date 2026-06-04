@@ -8,10 +8,11 @@ import CreateCardModal from '../modal/CreateCardModal'
 import CardModal from '../modal/CardDetailModal'
 import DeleteConfirmModal from '../modal/DeleteConfirmModal'
 import { CreateColumnModal } from '../modal/CreateColumnModal'
+import { useColumns } from '../../hooks/queries/useColumns'
 
 // modal create Column
 
-function ColumnHeader({ id, title, color, cardIds }) {
+function ColumnHeader({ id, title, color }) {
   const [isEdit, setEditOpen] = useState(false)
   const [columnModal, setColumnModal] = useState(null)
   const [isDeleteModal, setIsDeleteModal] = useState(false)
@@ -31,7 +32,7 @@ function ColumnHeader({ id, title, color, cardIds }) {
             backgroundColor: color,
           }}
         >
-          {cardIds.length}
+          {/* {cardIds.length} */}
         </span>
       </div>
       {/* column button */}
@@ -117,37 +118,45 @@ function ColumnHeader({ id, title, color, cardIds }) {
 export default function Column() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
   const [cardModalColumnId, setCardModalColumnId] = useState<string | null>(null)
-  const { cards, columns, dispatch } = useBoardStore()
+  const { cards, dispatch } = useBoardStore()
+  const { data: columns, isLoading, isError } = useColumns()
+
+  if (isLoading) return <div>Carregando...</div> // ou um skeleton
+  if (isError) return <div>Erro ao carregar colunas</div>
+  if (!columns) return null
+
+  console.log(columns)
 
   return (
     <div className="flex gap-6">
       <CardModal />
-      {columns.map(({ id, title, color, cardIds }) => (
+      {columns.map(({ id, name, color_hex }) => (
         <div key={id} className="flex flex-col shrink-0 w-72">
           {/* column header */}
-          <ColumnHeader id={id} title={title} color={color} cardIds={cardIds} />
+          <ColumnHeader id={id} title={name} color={color_hex} />
 
           {/* linha */}
           <div
             className="h-px mb-3 mx-1 rounded-full"
-            style={{ backgroundColor: color, opacity: 0.4 }}
+            style={{ backgroundColor: color_hex, opacity: 0.4 }}
           />
           {/* card */}
-          <div className="flex flex-col gap-3">
+          {/* <div className="flex flex-col gap-3">
             {cardIds.map((cardId) => {
               const card = cards[cardId]
               if (!card) return null
               return <Card key={cardId} {...card} />
             })}
-            {/* add card button */}
-            <button
-              onClick={() => setCardModalColumnId(id)}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg text-[#444] hover:text-[#888] hover:bg-[#151515] transition-colors text-xs font-medium cursor-pointer"
-            >
-              <Plus size={12} />
-              Adicionar card
-            </button>
-          </div>
+      
+
+          </div> */}
+          <button
+            onClick={() => setCardModalColumnId(id)}
+            className="flex items-center gap-2 px-3 py-2 rounded-lg text-[#444] hover:text-[#888] hover:bg-[#151515] transition-colors text-xs font-medium cursor-pointer"
+          >
+            <Plus size={12} />
+            Adicionar card
+          </button>
         </div>
       ))}
       <div className="flex flex-col shrink-0 w-72">

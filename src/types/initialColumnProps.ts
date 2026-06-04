@@ -1,7 +1,9 @@
 export interface initialColumnProps {
   id: string
-  title: string
-  color: string
-  cardIds: string[]
-  wipLimit?: number
+  name: string
+  color_hex: string
+  position: number
+  create_by: string
+  create_at: string
+  updated_at: string
 }
