@@ -2,10 +2,10 @@ import type { User } from '../../types/User'
 import api from '../axios'
 
 export class UserService {
-  static async getMe(): Promise<User> {
-    const { data } = await api.get<User>('/users/me')
-    return data
-  }
+  // static async getMe(): Promise<User> {
+  //   const { data } = await api.get<User>('/users/me')
+  //   return data
+  // }
   // getMe: async (): Promise<User> => {
   //   const { data } = await api.get<User>('/users/01KS15P0R34ZA1D66SP4697FQX')
   //   return data
