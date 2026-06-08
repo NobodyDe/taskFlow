@@ -15,46 +15,46 @@ import { useState } from 'react'
 import { useBoardStore } from '../../stores/useBoardStore'
 import DeleteConfirmModal from '../modal/DeleteConfirmModal'
 
-export const priorityConfig: Record<Priority, PriorityProps> = {
-  critical: {
-    label: 'Crítico',
-    color: '#ff3b30',
-    bg: 'rgba(255,59,48,0.1)',
-    border: 'rgba(255,59,48,0.25)',
-    icon: AlertCircle,
-  },
-  high: {
-    label: 'Alto',
-    color: '#ff9500',
-    bg: 'rgba(255,149,0,0.1)',
-    border: 'rgba(255,149,0,0.25)',
-    icon: AlertTriangle,
-  },
-  medium: {
-    label: 'Médio',
-    color: '#ffd60a',
-    bg: 'rgba(255,214,10,0.08)',
-    border: 'rgba(255,214,10,0.2)',
-    icon: ArrowUp,
-  },
-  low: {
-    label: 'Baixo',
-    color: '#32d74b',
-    bg: 'rgba(50,215,75,0.08)',
-    border: 'rgba(50,215,75,0.2)',
-    icon: ArrowDown,
-  },
-}
+// export const priorityConfig: Record<Priority, PriorityProps> = {
+//   critical: {
+//     label: 'Crítico',
+//     color: '#ff3b30',
+//     bg: 'rgba(255,59,48,0.1)',
+//     border: 'rgba(255,59,48,0.25)',
+//     icon: AlertCircle,
+//   },
+//   high: {
+//     label: 'Alto',
+//     color: '#ff9500',
+//     bg: 'rgba(255,149,0,0.1)',
+//     border: 'rgba(255,149,0,0.25)',
+//     icon: AlertTriangle,
+//   },
+//   medium: {
+//     label: 'Médio',
+//     color: '#ffd60a',
+//     bg: 'rgba(255,214,10,0.08)',
+//     border: 'rgba(255,214,10,0.2)',
+//     icon: ArrowUp,
+//   },
+//   low: {
+//     label: 'Baixo',
+//     color: '#32d74b',
+//     bg: 'rgba(50,215,75,0.08)',
+//     border: 'rgba(50,215,75,0.2)',
+//     icon: ArrowDown,
+//   },
+// }
 
 function isOverdue(dueDate?: string): boolean {
   if (!dueDate) return false
-  const due = new Date(dueDate + 'T23:59:59')
+  const due = new Date(dueDate)
   return due < new Date()
 }
 
 function formatDate(dateStr: string): string {
   if (!dateStr) return ''
-  const date = new Date(dateStr + 'T00:00:00')
+  const date = new Date(dateStr)
   return date.toLocaleDateString('pt-br', { day: '2-digit', month: 'short' })
 }
 
@@ -72,8 +72,8 @@ export default function Card({
   attachments,
   comments,
 }: CardProps) {
-  const config = priorityConfig[priority]
-  const Icon = config.icon
+  // const config = priorityConfig[priority]
+  // const Icon = config.icon
   const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false)
   const { setSelectedCardId, dispatch } = useBoardStore()
 
@@ -86,20 +86,22 @@ export default function Card({
     >
       <div
         className="absolute left-0 top-3 bottom-3 w-0.5 rounded-full"
-        style={{ backgroundColor: config.color }}
+        // style={{ backgroundColor: config.color }}
       />
       {/* header */}
       <div className="flex items-start justify-between gap-2">
         <span
           className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-xs font-medium shrink-0"
-          style={{
-            color: config.color,
-            backgroundColor: config.bg,
-            border: `1px solid ${config.border}`,
-          }}
+          style={
+            {
+              // color: config.color,
+              // backgroundColor: config.bg,
+              // border: `1px solid ${config.border}`,
+            }
+          }
         >
-          <Icon size={10} />
-          {config.label}
+          {/* <Icon size={10} /> */}
+          {/* {config.label} */}
         </span>
         <button
           onClick={(e) => {
