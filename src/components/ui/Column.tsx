@@ -9,6 +9,7 @@ import CardModal from '../modal/CardDetailModal'
 import DeleteConfirmModal from '../modal/DeleteConfirmModal'
 import { CreateColumnModal } from '../modal/CreateColumnModal'
 import { useColumns } from '../../hooks/queries/useColumns'
+import ColumnContent from './ColumnContent'
 
 // modal create Column
 
@@ -141,15 +142,9 @@ export default function Column() {
             style={{ backgroundColor: color_hex, opacity: 0.4 }}
           />
           {/* card */}
-          {/* <div className="flex flex-col gap-3">
-            {cardIds.map((cardId) => {
-              const card = cards[cardId]
-              if (!card) return null
-              return <Card key={cardId} {...card} />
-            })}
-      
-
-          </div> */}
+          <div className="flex flex-col gap-3">
+            <ColumnContent columnId={id} />
+          </div>
           <button
             onClick={() => setCardModalColumnId(id)}
             className="flex items-center gap-2 px-3 py-2 rounded-lg text-[#444] hover:text-[#888] hover:bg-[#151515] transition-colors text-xs font-medium cursor-pointer"
